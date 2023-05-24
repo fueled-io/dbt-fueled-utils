@@ -9,7 +9,7 @@ Includes:
 - Pre and post hooks to handle incremental processing of events.
 - Various helper macros used throughout data modeling.
 
-# Credits
+## Credits
 
 This project started off as a mirror of Snowplow Analytics' [dbt-snowplow-utils](https://github.com/snowplow/dbt-snowplow-utils)
 
