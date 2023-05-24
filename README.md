@@ -1,30 +1,30 @@
-[![early-release]][tracker-classificiation] [![License][license-image]][license] [![Discourse posts][discourse-image]][discourse]
+# fueled-utils
 
-![snowplow-logo](https://raw.githubusercontent.com/snowplow/dbt-snowplow-utils/main/assets/snowplow_logo.png)
-
-# snowplow-utils
-
-This package contains a mix of functionality to be used with the other Snowplow dbt packages, or to be used within your own packages/projects.
+This package contains a mix of functionality to be used with the other Fueled dbt packages, or to be used within your own packages/projects.
 
 Includes:
 
 - Overwritten incremental materialization.
-- Utils to assist with modeling Snowplow data.
+- Utils to assist with modeling Fueled data.
 - Pre and post hooks to handle incremental processing of events.
 - Various helper macros used throughout data modeling.
+
+# Credits
+
+This project started off as a mirror of Snowplow Analytics' [dbt-snowplow-utils](https://github.com/snowplow/dbt-snowplow-utils)
 
 ## Contents
 
 **[Macros](#macros)**
 
-1. [snowplow-utils](#snowplow-utils)
+1. [fueled-utils](#fueled-utils)
    1. [Contents](#contents)
    2. [Macros](#macros)
       1. [get\_columns\_in\_relation\_by\_column\_prefix (source)](#get_columns_in_relation_by_column_prefix-source)
       2. [combine\_column\_versions (source)](#combine_column_versions-source)
       3. [is\_run\_with\_new\_events (source)](#is_run_with_new_events-source)
-      4. [snowplow\_web\_delete\_from\_manifest (source)](#snowplow_web_delete_from_manifest-source)
-      5. [snowplow\_mobile\_delete\_from\_manifest (source)](#snowplow_mobile_delete_from_manifest-source)
+      4. [fueled\_web\_delete\_from\_manifest (source)](#fueled_web_delete_from_manifest-source)
+      5. [fueled\_mobile\_delete\_from\_manifest (source)](#fueled_mobile_delete_from_manifest-source)
       6. [get\_value\_by\_target (source)](#get_value_by_target-source)
       7. [n\_timedeltas\_ago (source)](#n_timedeltas_ago-source)
       8. [set\_query\_tag (source)](#set_query_tag-source)
@@ -44,15 +44,14 @@ Includes:
       2. [BigQuery](#bigquery)
       3. [Snowflake](#snowflake)
       4. [Notes](#notes)
-2. [Join the Snowplow community](#join-the-snowplow-community)
 3. [Copyright and license](#copyright-and-license)
 
 
 ## Macros
 
-There are many macros contained in this package, with the majority designed for use internally at Snowplow.
+There are many macros contained in this package, with the majority designed for use internally at Fueled.
 
-There are however a selection that were intended for public use and that can assist you in modelling Snowplow data. The documentation for these macros can be found below.
+There are however a selection that were intended for public use and that can assist you in modelling Fueled data. The documentation for these macros can be found below.
 
 ### get_columns_in_relation_by_column_prefix ([source](macros/utils/get_columns_in_relation_by_column_prefix.sql))
 
@@ -70,8 +69,8 @@ This macro returns an array of column objects within a relation that start with 
 **Usage:**
 
 ```sql
-{% set matched_columns = snowplow_utils.get_columns_in_relation_by_column_prefix(
-                          relation=ref('snowplow_web_base_events_this_run'),
+{% set matched_columns = fueled_utils.get_columns_in_relation_by_column_prefix(
+                          relation=ref('fueled_web_base_events_this_run'),
                           column_prefix='custom_context_1_0_'
                           ) %}
 
@@ -89,9 +88,9 @@ The order of the matched columns is denoted by their ordinal position.
 
 ### combine_column_versions ([source](macros/utils/bigquery/combine_column_versions.sql))
 
-*BigQuery Only.* This macro is designed primarily for combining versions of custom context or an unstructured event column from the Snowplow events table in BigQuery.
+*BigQuery Only.* This macro is designed primarily for combining versions of custom context or an unstructured event column from the Fueled events table in BigQuery.
 
-As your schemas for such columns evolve, multiple versions of the same column will be created in your events table e.g. `custom_context_1_0_0`, `custom_context_1_0_1`. These columns contain nested fields i.e. are of a datatype `RECORD`. When modeling Snowplow data it can be useful to combine or coalesce each nested field across all versions of the column for a continuous view over time. This macro mitigates the need to update your coalesce statement each time a new version of the column is created.
+As your schemas for such columns evolve, multiple versions of the same column will be created in your events table e.g. `custom_context_1_0_0`, `custom_context_1_0_1`. These columns contain nested fields i.e. are of a datatype `RECORD`. When modeling Fueled data it can be useful to combine or coalesce each nested field across all versions of the column for a continuous view over time. This macro mitigates the need to update your coalesce statement each time a new version of the column is created.
 
 Fields can be selected using 4 methods:
 
@@ -111,7 +110,7 @@ By default any returned fields will be assigned an alias matching the field name
 - `level_filter`: Default `equalto`. Accepted values `equalto`, `lessthan`, `greaterthan`. Used in conjunction with `nested_level` to determine which fields to return.
 - `relation_alias`: Optional. The alias of the relation containing the column. If passed the alias will be prepended to the full path for each field e.g. `<relation_alias>.<column>.<field>`. Useful when your desired column occurs in multiple relations within your model.
 - `include_field_alias`: Default `True`. Determines whether to included the field alias in the final coalesced field e.g. `coalesce(...) as <field_alias>`. Useful when using the field as part of a join.
-- `array_index`: Default 0. If the column is of mode `REPEATED` i.e. an array, this determines the element to take. All Snowplow context columns are arrays, typically with only a single element.
+- `array_index`: Default 0. If the column is of mode `REPEATED` i.e. an array, this determines the element to take. All Fueled context columns are arrays, typically with only a single element.
 - `max_nested_level`: Default 15. Imposes a hard stop for recursions on heavily nested data.
 - `exclude_versions`: Optional. List of versions to be excluded from column coalescing. Versions should be provided as an array of strings in snake case (`['1_0_0']`)
 
@@ -128,8 +127,8 @@ The following examples assumes two 'product' context columns with the following 
 **All fields**
 
 ```sql
-{%- set all_fields = snowplow_utils.combine_column_versions(
-                                relation=ref('snowplow_web_base_events_this_run'),
+{%- set all_fields = fueled_utils.combine_column_versions(
+                                relation=ref('fueled_web_base_events_this_run'),
                                 column_prefix='product_v'
                                 ) -%}
 
@@ -152,8 +151,8 @@ Note fields within `accessories` are not unnested as `accessories` is of mode `R
 **Fields filtered by name**
 
 ```sql
-{%- set required_fields = snowplow_utils.combine_column_versions(
-                                relation=ref('snowplow_web_base_events_this_run'),
+{%- set required_fields = fueled_utils.combine_column_versions(
+                                relation=ref('fueled_web_base_events_this_run'),
                                 column_prefix='product_v',
                                 required_fields=['name', ('specs.power_rating', 'product_power_rating')]
                                 ) -%}
@@ -174,8 +173,8 @@ Note we have renamed the power rating field by passing a tuple of the field name
 **Fields filtered by level**
 
 ```sql
-{%- set fields_by_level = snowplow_utils.combine_column_versions(
-                                relation=ref('snowplow_web_base_events_this_run'),
+{%- set fields_by_level = fueled_utils.combine_column_versions(
+                                relation=ref('fueled_web_base_events_this_run'),
                                 column_prefix='product_v',
                                 nested_level=1
                                 ) -%}
@@ -197,13 +196,13 @@ select
 
 ### is_run_with_new_events ([source](macros/utils/is_run_with_new_events.sql))
 
-This macro is designed for use with Snowplow data modelling packages like `snowplow-web`. It can be used in any incremental models, to effectively block the incremental model from being updated with old data which it has already consumed. This saves cost as well as preventing historical data from being overwritten with partially complete data (due to a batch back-fill for instance).
+This macro is designed for use with Fueled data modelling packages like `fueled-web`. It can be used in any incremental models, to effectively block the incremental model from being updated with old data which it has already consumed. This saves cost as well as preventing historical data from being overwritten with partially complete data (due to a batch back-fill for instance).
 
-The macro utilizes the `snowplow_[platform]_incremental_manifest` table to determine whether the model from which the macro is called, i.e. `{{ this }}`, has already consumed the data in the given run. If it has, it returns `false`. If the data in the run contains new data, `true` is returned.
+The macro utilizes the `fueled_[platform]_incremental_manifest` table to determine whether the model from which the macro is called, i.e. `{{ this }}`, has already consumed the data in the given run. If it has, it returns `false`. If the data in the run contains new data, `true` is returned.
 
 **Arguments:**
 
-- `package_name`: The modeling package name i.e. `snowplow-mobile`.
+- `package_name`: The modeling package name i.e. `fueled-mobile`.
 
 **Returns:**
 
@@ -223,15 +222,15 @@ The macro utilizes the `snowplow_[platform]_incremental_manifest` table to deter
 select
   ...
 
-from {{ ref('snowplow_mobile_base_events_this_run' ) }}
-where {{ snowplow_utils.is_run_with_new_events('snowplow_mobile') }} --returns false if run doesn't contain new events.
+from {{ ref('fueled_mobile_base_events_this_run' ) }}
+where {{ fueled_utils.is_run_with_new_events('fueled_mobile') }} --returns false if run doesn't contain new events.
 ```
 
-### snowplow_web_delete_from_manifest ([source](macros/utils/snowplow_delete_from_manifest.sql))
+### fueled_web_delete_from_manifest ([source](macros/utils/fueled_delete_from_manifest.sql))
 
-The `snowplow-web` package makes use of a centralised manifest system to record the current state of the package. There may be times when you want to remove the metadata associated with particular models from the manifest, for instance to replay events through a particular model.
+The `fueled-web` package makes use of a centralised manifest system to record the current state of the package. There may be times when you want to remove the metadata associated with particular models from the manifest, for instance to replay events through a particular model.
 
-This can be performed as part of the run-start operation of the snowplow-web package, as described in the [docs][snowplow-web-docs]. You can however perform this operation independently using the `snowplow_web_delete_from_manifest` macro.
+This can be performed as part of the run-start operation of the fueled-web package, as described in the [docs][fueled-web-docs]. You can however perform this operation independently using the `fueled_web_delete_from_manifest` macro.
 
 **Arguments:**
 
@@ -240,16 +239,16 @@ This can be performed as part of the run-start operation of the snowplow-web pac
 **Usage:**
 
 ```bash
-dbt run-operation snowplow_web_delete_from_manifest --args "models: ['snowplow_web_page_views','snowplow_web_sessions']"
+dbt run-operation fueled_web_delete_from_manifest --args "models: ['fueled_web_page_views','fueled_web_sessions']"
 # or
-dbt run-operation snowplow_web_delete_from_manifest --args "models: snowplow_web_page_views"
+dbt run-operation fueled_web_delete_from_manifest --args "models: fueled_web_page_views"
 ```
 
-### snowplow_mobile_delete_from_manifest ([source](macros/utils/snowplow_delete_from_manifest.sql))
+### fueled_mobile_delete_from_manifest ([source](macros/utils/fueled_delete_from_manifest.sql))
 
-The `snowplow-mobile` package makes use of a centralised manifest system to record the current state of the package. There may be times when you want to remove the metadata associated with particular models from the manifest, for instance to replay events through a particular model.
+The `fueled-mobile` package makes use of a centralised manifest system to record the current state of the package. There may be times when you want to remove the metadata associated with particular models from the manifest, for instance to replay events through a particular model.
 
-This can be performed as part of the run-start operation of the snowplow-mobile package, as described in the [docs][snowplow-mobile-docs]. You can however perform this operation independently using the `snowplow_mobile_delete_from_manifest` macro.
+This can be performed as part of the run-start operation of the fueled-mobile package, as described in the [docs][fueled-mobile-docs]. You can however perform this operation independently using the `fueled_mobile_delete_from_manifest` macro.
 
 **Arguments:**
 
@@ -258,9 +257,9 @@ This can be performed as part of the run-start operation of the snowplow-mobile 
 **Usage:**
 
 ```bash
-dbt run-operation snowplow_mobile_delete_from_manifest --args "models: ['snowplow_mobile_screen_views','snowplow_mobile_sessions']"
+dbt run-operation fueled_mobile_delete_from_manifest --args "models: ['fueled_mobile_screen_views','fueled_mobile_sessions']"
 # or
-dbt run-operation snowplow_mobile_delete_from_manifest --args "models: snowplow_mobile_screen_views"
+dbt run-operation fueled_mobile_delete_from_manifest --args "models: fueled_mobile_screen_views"
 ```
 
 ### get_value_by_target ([source](macros/utils/get_value_by_target.sql))
@@ -279,8 +278,8 @@ This macro is designed to dynamically return values based on the target (`target
 # dbt_project.yml
 ...
 vars:
-  snowplow_web:
-    snowplow__backfill_limit_days: "{{ snowplow_utils.get_value_by_target(dev_value=1, default_value=30, dev_target_name='dev') }}"
+  fueled_web:
+    fueled__backfill_limit_days: "{{ fueled_utils.get_value_by_target(dev_value=1, default_value=30, dev_target_name='dev') }}"
 ```
 
 **Returns:**
@@ -299,7 +298,7 @@ This macro takes the current timestamp and subtracts `n` units, as defined by th
 **Usage:**
 
 ```sql
-{{ snowplow_utils.n_timedeltas_ago(1, 'weeks') }}
+{{ fueled_utils.n_timedeltas_ago(1, 'weeks') }}
 ```
 
 **Returns:**
@@ -312,9 +311,9 @@ By combining this with the `get_value_by_target` macro, you can dynamically set 
 # dbt_project.yml
 ...
 vars:
-  snowplow_mobile:
-    snowplow__start_date: "{{ snowplow_utils.get_value_by_target(
-                                      dev_value=snowplow_utils.n_timedeltas_ago(1, 'weeks'),
+  fueled_mobile:
+    fueled__start_date: "{{ fueled_utils.get_value_by_target(
+                                      dev_value=fueled_utils.n_timedeltas_ago(1, 'weeks'),
                                       default_value='2020-01-01',
                                       dev_target_name='dev') }}"
 ```
@@ -331,7 +330,7 @@ This macro takes a provided statement as argument and generates the SQL command 
 **Usage:**
 
 ```sql
-{{ snowplow_utils.set_query_tag('snowplow_query_tag') }}
+{{ fueled_utils.set_query_tag('fueled_query_tag') }}
 ```
 
 **Returns:**
@@ -347,7 +346,7 @@ This macro takes care of harmonizing cross-db functions that flatten an array to
 **Usage:**
 
 ```sql
-{{ snowplow_utils.get_array_to_string('array_column', 'column_prefix', 'delimiter') }}
+{{ fueled_utils.get_array_to_string('array_column', 'column_prefix', 'delimiter') }}
 ```
 
 **Returns:**
@@ -361,7 +360,7 @@ This macro takes care of harmonizing cross-db functions that create an array out
 **Usage:**
 
 ```sql
-{{ snowplow_utils.get_split_to_array('string_column', 'column_prefix', 'delimiter') }}
+{{ fueled_utils.get_split_to_array('string_column', 'column_prefix', 'delimiter') }}
 ```
 
 **Returns:**
@@ -383,7 +382,7 @@ There is also an optional boolean parameter called `is_distinct` which, when ena
 **Usage:**
 
 ```sql
-{{ snowplow_utils.get_string_agg('base_column', 'column_prefix', ';', 'order_by_col', sort_numeric=true, order_by_column_prefix='order_by_column_prefix', is_distict=True, order_desc=True) }}
+{{ fueled_utils.get_string_agg('base_column', 'column_prefix', ';', 'order_by_col', sort_numeric=true, order_by_column_prefix='order_by_column_prefix', is_distict=True, order_desc=True) }}
 
 ```
 
@@ -393,7 +392,7 @@ There is also an optional boolean parameter called `is_distinct` which, when ena
 
 ### get_sde_or_context ([source](macros/utils/get_context_or_sde.sql))
 
-This macro exists for Redshift and Postgres users to more easily select their self-describing event and context tables and apply de-duplication before joining onto their (already de-duplicated) events table. The `root_id` and `root_tstamp` columns are by default returned as `schema_name_id` and `schema_name_tstamp` respectively, where `schema_name` is the value in the `schema_name` column of the table. In the case where multiple entities may be sent in the context (e.g. products in a search results), you should set the `single_entity` argument to `false` and use an additional criteria in your join (see [the snowplow docs](https://docs.snowplow.io/docs/modeling-your-data/modeling-your-data-with-dbt/dbt-advanced-usage/dbt-duplicates/) for further details).
+This macro exists for Redshift and Postgres users to more easily select their self-describing event and context tables and apply de-duplication before joining onto their (already de-duplicated) events table. The `root_id` and `root_tstamp` columns are by default returned as `schema_name_id` and `schema_name_tstamp` respectively, where `schema_name` is the value in the `schema_name` column of the table. In the case where multiple entities may be sent in the context (e.g. products in a search results), you should set the `single_entity` argument to `false` and use an additional criteria in your join (see [the fueled docs](https://docs.fueled.io/docs/modeling-your-data/modeling-your-data-with-dbt/dbt-advanced-usage/dbt-duplicates/) for further details).
 
 Note that it is the responsibility of the user to ensure they have no duplicate names when using this macro multiple times or when a schema column name matches a column already in the events table. In this case the `prefix` argument should be used and aliasing applied to the output.
 
@@ -401,7 +400,7 @@ Note that it is the responsibility of the user to ensure they have no duplicate 
 
 With at most one entity per context:
 ```sql
-with {{ snowplow_utils.get_sde_or_context('atomic', 'nl_basjes_yauaa_context_1', "'2023-01-01'", "'2023-02-01'")}}
+with {{ fueled_utils.get_sde_or_context('atomic', 'nl_basjes_yauaa_context_1', "'2023-01-01'", "'2023-02-01'")}}
 
 select
 ...
@@ -412,7 +411,7 @@ left join nl_basjes_yauaa_context_1 b on
 ```
 With the possibility of multiple entities per context, your events table must already be de-duped but still have a field with the number of duplicates:
 ```sql
-with {{ snowplow_utils.get_sde_or_context('atomic', 'nl_basjes_yauaa_context_1', "'2023-01-01'", "'2023-02-01'", single_entity = false)}}
+with {{ fueled_utils.get_sde_or_context('atomic', 'nl_basjes_yauaa_context_1', "'2023-01-01'", "'2023-02-01'", single_entity = false)}}
 
 select
 ...,
@@ -474,7 +473,7 @@ Extracting a single field
 ```sql
 
 select
-{{ snowplow_utils.get_field(column_name = 'contexts_nl_basjes_yauaa_context_1', 
+{{ fueled_utils.get_field(column_name = 'contexts_nl_basjes_yauaa_context_1', 
                             field_name = 'agent_class', 
                             table_alias = 'a',
                             type = 'string',
@@ -489,7 +488,7 @@ Extracting multiple fields
 
 select
 {% for field in [('field1', 'string'), ('field2', 'numeric'), ...] %}
-  {{ snowplow_utils.get_field(column_name = 'contexts_nl_basjes_yauaa_context_1', 
+  {{ fueled_utils.get_field(column_name = 'contexts_nl_basjes_yauaa_context_1', 
                             field_name = field[0], 
                             table_alias = 'a',
                             type = field[1],
@@ -515,7 +514,7 @@ This macro mimics the utility of the dbt_utils version however for BigQuery it e
 **Usage:**
 
 ```sql
-{{ snowplow_utils.timestamp_diff('2022-01-10 10:23:02', '2022-01-14 09:40:56', 'day') }}
+{{ fueled_utils.timestamp_diff('2022-01-10 10:23:02', '2022-01-14 09:40:56', 'day') }}
 ```
 
 **Returns:**
@@ -536,7 +535,7 @@ This macro mimics the utility of the dbt_utils version however for BigQuery it e
 **Usage:**
 
 ```sql
-{{ snowplow_utils.timestamp_add('day', 5, '2022-02-01 10:05:32') }}
+{{ fueled_utils.timestamp_add('day', 5, '2022-02-01 10:05:32') }}
 ```
 
 **Returns:**
@@ -554,7 +553,7 @@ This macro casts a column to a timestamp across databases. It is an adaptation o
 **Usage:**
 
 ```sql
-{{ snowplow_utils.cast_to_tstamp('events.collector_tstamp') }}
+{{ fueled_utils.cast_to_tstamp('events.collector_tstamp') }}
 ```
 
 **Returns:**
@@ -572,7 +571,7 @@ This macro casts a column to a unix timestamp across databases.
 **Usage:**
 
 ```sql
-{{ snowplow_utils.to_unixtstamp('events.collector_tstamp') }}
+{{ fueled_utils.to_unixtstamp('events.collector_tstamp') }}
 ```
 
 **Returns:**
@@ -586,7 +585,7 @@ This macro returns the current timestamp in UTC.
 **Usage:**
 
 ```sql
-{{ snowplow_utils.current_timestamp_in_utc() }}
+{{ fueled_utils.current_timestamp_in_utc() }}
 ```
 
 **Returns:**
@@ -601,7 +600,7 @@ This macro takes care of unnesting of arrays regardles of the data warehouse. An
 **Usage:**
 
 ```sql
-{{ snowplow_utils.unnest('id_column', 'array_to_be_unnested', 'field_alias', 'source_table') }}
+{{ fueled_utils.unnest('id_column', 'array_to_be_unnested', 'field_alias', 'source_table') }}
 ```
 
 **Returns:**
@@ -614,22 +613,22 @@ This macro takes care of unnesting of arrays regardles of the data warehouse. An
 This package provides an enhanced version of the standard incremental materialization. This builds upon the out-of-the-box incremental materialization provided by dbt, by limiting the length of the table scans on the destination table. This improves both performance and reduces cost. The following methodology is used to calculate the limit of the table scan:
 
 - The minimum date is found in the `tmp_relation`, based on the `upsert_date_key`
-- By default, 30 days are subtracted from this date. This is set by `snowplow__upsert_lookback_days`. We found when modeling Snowplow data, having this look-back period of 30 days can help minimise the chance of introducing duplicates in your destination table. Reducing the number of look-back days will improve performance further but increase the risk of duplicates.
+- By default, 30 days are subtracted from this date. This is set by `fueled__upsert_lookback_days`. We found when modeling Fueled data, having this look-back period of 30 days can help minimise the chance of introducing duplicates in your destination table. Reducing the number of look-back days will improve performance further but increase the risk of duplicates.
 - The look-back can be disabled altogether, by setting `disable_upsert_lookback=true` in your model's config (see below). This is not recommended for most use cases.
 
-To enable this optimized version you must add `snowplow_optimize=true` to the config of any model using it, and add the following once to your `dbt_project.yml` file:
+To enable this optimized version you must add `fueled_optimize=true` to the config of any model using it, and add the following once to your `dbt_project.yml` file:
 
 ```yml
 dispatch:
   - macro_namespace: dbt
-    search_order: ['snowplow_utils', 'dbt']
+    search_order: ['fueled_utils', 'dbt']
 ```
 
 This optimization adds an additional `predicate`, based on the logic above, to the per-warehouse sql generated by dbt, and we use the [default incremental strategy](https://docs.getdbt.com/docs/build/incremental-models#about-incremental_strategy) for each warehouse.
 
 Because we only overwrite the `get_merge_sql`/`get_delete_insert_merge_sql` this means all options and features of the standard incremental materialization are available, including `on_schema_change` and `incremental_predicates`.
 
-Each config must contain, in addition to `snowplow_optimize`, an `upsert_date_key` and a `unique_key`. We support Snowflake, BigQuery, Redshift, Postgres, Spark, and Databricks, however some warehouses have some additional config options that we recommend using to get the most out of the optimization. 
+Each config must contain, in addition to `fueled_optimize`, an `upsert_date_key` and a `unique_key`. We support Snowflake, BigQuery, Redshift, Postgres, Spark, and Databricks, however some warehouses have some additional config options that we recommend using to get the most out of the optimization. 
 
 ### BigQuery
 
@@ -643,7 +642,7 @@ For BigQuery it is advised (and required for the optimization to work) to add a 
     materialized='incremental',
     unique_key='page_view_id', # Required: the primary key of your model
     upsert_date_key='start_tstamp', # Required: The date key to be used to calculate the limits
-    partition_by = snowplow_utils.get_value_by_target_type(bigquery_val={
+    partition_by = fueled_utils.get_value_by_target_type(bigquery_val={
       "field": "start_tstamp",
       "data_type": "timestamp",
       "granularity": "day" # Only introduced in dbt v0.19.0+. Defaults to 'day' for dbt v0.18 or earlier
@@ -671,9 +670,9 @@ During testing we found that providing the `upsert_date_key` as a cluster key re
 
 ### Notes
 
-- `snowplow__upsert_lookback_days` defaults to 30 days. If you set `snowplow__upsert_lookback_days` to too short a period, duplicates can occur in your incremental table.
+- `fueled__upsert_lookback_days` defaults to 30 days. If you set `fueled__upsert_lookback_days` to too short a period, duplicates can occur in your incremental table.
 
-# Join the Snowplow community
+# Join the Fueled community
 
 We welcome all ideas, questions and contributions!
 
@@ -683,7 +682,7 @@ If you find a bug, please report an issue on GitHub.
 
 # Copyright and license
 
-The snowplow-utils package is Copyright 2021-2022 Snowplow Analytics Ltd.
+The fueled-utils package is based upon Snowplow Analytic's original Copyright 2021-2022.
 
 Licensed under the [Apache License, Version 2.0][license] (the "License");
 you may not use this software except in compliance with the License.
@@ -695,16 +694,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 [license]: http://www.apache.org/licenses/LICENSE-2.0
-[license-image]: http://img.shields.io/badge/license-Apache--2-blue.svg?style=flat
-[tracker-classificiation]: https://docs.snowplowanalytics.com/docs/collecting-data/collecting-from-own-applications/tracker-maintenance-classification/
-[early-release]: https://img.shields.io/static/v1?style=flat&label=Snowplow&message=Early%20Release&color=014477&labelColor=9ba0aa&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAeFBMVEVMaXGXANeYANeXANZbAJmXANeUANSQAM+XANeMAMpaAJhZAJeZANiXANaXANaOAM2WANVnAKWXANZ9ALtmAKVaAJmXANZaAJlXAJZdAJxaAJlZAJdbAJlbAJmQAM+UANKZANhhAJ+EAL+BAL9oAKZnAKVjAKF1ALNBd8J1AAAAKHRSTlMAa1hWXyteBTQJIEwRgUh2JjJon21wcBgNfmc+JlOBQjwezWF2l5dXzkW3/wAAAHpJREFUeNokhQOCA1EAxTL85hi7dXv/E5YPCYBq5DeN4pcqV1XbtW/xTVMIMAZE0cBHEaZhBmIQwCFofeprPUHqjmD/+7peztd62dWQRkvrQayXkn01f/gWp2CrxfjY7rcZ5V7DEMDQgmEozFpZqLUYDsNwOqbnMLwPAJEwCopZxKttAAAAAElFTkSuQmCC
 
-[discourse-image]: https://img.shields.io/discourse/posts?server=https%3A%2F%2Fdiscourse.snowplowanalytics.com%2F
-[discourse]: http://discourse.snowplowanalytics.com/
-[snowplow-web]: https://github.com/snowplow/dbt-snowplow-web
-[snowplow-mobile]: https://github.com/snowplow/dbt-snowplow-mobile
-[snowplow-web-docs]: https://snowplow.github.io/dbt-snowplow-web/#!/overview/snowplow_web
-[snowplow-mobile-docs]: https://snowplow.github.io/dbt-snowplow-mobile/#!/overview/snowplow_mobile
-[dbt-snowflake-merge-strategy]: https://docs.getdbt.com/reference/resource-configs/snowflake-configs#merge-behavior-incremental-models
-[snowflake-merge-duplicates]: https://docs.snowflake.com/en/sql-reference/sql/merge.html#duplicate-join-behavior
-[dbt-column-objects]: https://docs.getdbt.com/reference/dbt-classes#column
+# Significant Changes
+
+Snowplow's dbt-snowplow-util package has been mirrored by Fueled to work with Fueled's base event structures.
