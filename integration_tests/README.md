@@ -1,6 +1,6 @@
-# snowplow-utils-integration-tests
+# fueled-utils-integration-tests
 
-Integration test suite for the snowplow-utils dbt package.
+Integration test suite for the fueled-utils dbt package.
 
 The `./scripts` directory contains several scripts. A selection of macros & materializations within this package require dedicated scripts to test, typically because they either:
 - Need to be executed several times in order to be tested correctly i.e. an incremental materialization.

@@ -1,12 +1,12 @@
-{% macro snowplow_validate_get_incremental_strategy(config) -%}
-  {{ adapter.dispatch('snowplow_validate_get_incremental_strategy', 'snowplow_utils')(config) }}
+{% macro fueled_validate_get_incremental_strategy(config) -%}
+  {{ adapter.dispatch('fueled_validate_get_incremental_strategy', 'fueled_utils')(config) }}
 {%- endmacro %}
 
 
-{% macro default__snowplow_validate_get_incremental_strategy(config) %}
+{% macro default__fueled_validate_get_incremental_strategy(config) %}
 
   {% if execute %}
-    {%- set error_message = "Warning: the `snowplow_incremental` materialization is deprecated and should be replaced with dbt's `incremental` materialization, setting `snowplow_optimize=true` in your model config, and setting the appropriate dispatch search order in your project. See https://docs.snowplow.io//docs/modeling-your-data/modeling-your-data-with-dbt/dbt-advanced-usage/dbt-incremental-logic-pre-release for more details. The `snowplow_incremental` materialization will be removed completely in a future version of the package." -%}
+    {%- set error_message = "Warning: the `fueled_incremental` materialization is deprecated and should be replaced with dbt's `incremental` materialization, setting `fueled_optimize=true` in your model config, and setting the appropriate dispatch search order in your project. See https://docs.fueled.io//docs/modeling-your-data/modeling-your-data-with-dbt/dbt-advanced-usage/dbt-incremental-logic-pre-release for more details. The `fueled_incremental` materialization will be removed completely in a future version of the package." -%}
     {%- do exceptions.warn(error_message) -%}
   {% endif %}
 
@@ -31,10 +31,10 @@
 {% endmacro %}
 
 
-{% macro snowflake__snowplow_validate_get_incremental_strategy(config) %}
+{% macro snowflake__fueled_validate_get_incremental_strategy(config) %}
 
   {% if execute %}
-    {%- set error_message = "Warning: the `snowplow_incremental` materialization is deprecated and should be replaced with dbt's `incremental` materialization, setting `snowplow_optimize=true` in your model config, and setting the appropriate dispatch search order in your project. See https://docs.snowplow.io//docs/modeling-your-data/modeling-your-data-with-dbt/dbt-advanced-usage/dbt-incremental-logic-pre-release for more details. The `snowplow_incremental` materialization will be removed completely in a future version of the package." -%}
+    {%- set error_message = "Warning: the `fueled_incremental` materialization is deprecated and should be replaced with dbt's `incremental` materialization, setting `fueled_optimize=true` in your model config, and setting the appropriate dispatch search order in your project. See https://docs.fueled.io//docs/modeling-your-data/modeling-your-data-with-dbt/dbt-advanced-usage/dbt-incremental-logic-pre-release for more details. The `fueled_incremental` materialization will be removed completely in a future version of the package." -%}
     {%- do exceptions.warn(error_message) -%}
   {% endif %}
 

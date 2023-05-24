@@ -6,21 +6,21 @@
     {% set incompatible_level_filter_error_message -%}
       Error: Incompatible level filter arg. Accepted args: {{accepted_level_filters|join(', ')}}
     {%- endset %}
-    {{ return(snowplow_utils.throw_compiler_error(incompatible_level_filter_error_message)) }}
+    {{ return(fueled_utils.throw_compiler_error(incompatible_level_filter_error_message)) }}
   {% endif %}
 
   {% if level is not none and required_field_names|length %}
     {% set double_filter_error_message -%}
       Error: Cannot filter fields by both `required_fields` and `level` arg. Please use only one.
     {%- endset %}
-    {{ return(snowplow_utils.throw_compiler_error(double_filter_error_message)) }}
+    {{ return(fueled_utils.throw_compiler_error(double_filter_error_message)) }}
   {% endif %}
 
   {% if required_field_names|length and level_filter != 'equalto' %}
     {% set required_fields_error_message -%}
       Error: To filter fields using `required_fields` arg, `level_filter` must be set to `equalto`
     {%- endset %}
-    {{ return(snowplow_utils.throw_compiler_error(required_fields_error_message)) }}
+    {{ return(fueled_utils.throw_compiler_error(required_fields_error_message)) }}
   {% endif %}
 
   {# level_limit is inclusive #}

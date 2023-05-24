@@ -29,7 +29,7 @@ tests:
 with prep as (
 {% for test in tests %}
 
-  {%- set actual = snowplow_utils.merge_fields_across_col_versions(
+  {%- set actual = fueled_utils.merge_fields_across_col_versions(
                                                     fields_by_col_version=test.fields_by_col_version
                                                     )-%}
   {%- set expected = test.expected -%}

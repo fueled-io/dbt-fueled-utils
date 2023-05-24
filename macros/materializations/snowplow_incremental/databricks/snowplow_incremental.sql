@@ -1,4 +1,4 @@
-{% materialization snowplow_incremental, adapter='databricks' -%}
+{% materialization fueled_incremental, adapter='databricks' -%}
   {%- set full_refresh_mode = (should_full_refresh()) -%}
 
   {# Required keys. Throws error if not present #}
@@ -12,7 +12,7 @@
   {% set tmp_relation = make_temp_relation(this) %}
 
   {# Validate early so we dont run SQL if the strategy is invalid or missing keys #}
-  {% set strategy = snowplow_utils.snowplow_validate_get_incremental_strategy(config) -%}
+  {% set strategy = fueled_utils.fueled_validate_get_incremental_strategy(config) -%}
 
   -- setup
   {{ run_hooks(pre_hooks, inside_transaction=False) }}
@@ -37,7 +37,7 @@
 
     {%- set dest_columns = adapter.get_columns_in_relation(target_relation) -%}
 
-    {% set build_sql = snowplow_utils.snowplow_merge( tmp_relation,
+    {% set build_sql = fueled_utils.fueled_merge( tmp_relation,
                                                       target_relation,
                                                       unique_key,
                                                       upsert_date_key,

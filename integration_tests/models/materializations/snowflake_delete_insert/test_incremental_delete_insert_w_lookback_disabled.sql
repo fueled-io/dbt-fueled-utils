@@ -10,7 +10,7 @@
     upsert_date_key='start_tstamp',
     disable_upsert_lookback=true,
     tags=["requires_script"],
-    snowplow_optimize=true
+    fueled_optimize=true
   )
 }}
 

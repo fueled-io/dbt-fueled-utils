@@ -55,7 +55,7 @@ macros:
     arguments:
       - name: package_name
         type: string
-        description: The modeling package name e.g. `snowplow-mobile`
+        description: The modeling package name e.g. `fueled-mobile`
   - name: log_message
     description: '{{ doc("macro_log_message") }}'
     arguments:

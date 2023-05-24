@@ -1,4 +1,4 @@
-name: 'snowplow_utils_integration_tests'
+name: 'fueled_utils_integration_tests'
 version: '0.14.2'
 config-version: 2
 
@@ -6,7 +6,7 @@ profile: 'integration_tests'
 
 dispatch:
   - macro_namespace: dbt
-    search_order: ['snowplow_utils', 'dbt']
+    search_order: ['fueled_utils', 'dbt']
 
 model-paths: ["models"]
 test-paths: ["tests"]
@@ -23,12 +23,12 @@ clean-targets:
 on-run-end: "{{ test_get_successful_models(enabled=var('enabled_test_get_successful_models', false)) }}"
 
 vars:
-  snowplow_utils_integration_tests:
+  fueled_utils_integration_tests:
     # Disables compiler errors during testing. Returns error message string instead, which we can test against.
-    snowplow__disable_errors: true
+    fueled__disable_errors: true
 
 models:
-  snowplow_utils_integration_tests:
+  fueled_utils_integration_tests:
     +schema: "snplw_utils_int_tests"
     materializations:
       snowflake_delete_insert:
@@ -45,7 +45,7 @@ models:
           +enabled: "{{ target.type in ['snowflake', 'bigquery', 'databricks', 'spark'] | as_bool() }}"
 
 tests:
-  snowplow_utils_integration_tests:
+  fueled_utils_integration_tests:
     materializations:
       snowflake_delete_insert:
         enabled: "{{ target.type == 'snowflake' | as_bool() }}"
@@ -56,7 +56,7 @@ tests:
 
 seeds:
   +quote_columns: false
-  snowplow_utils_integration_tests:
+  fueled_utils_integration_tests:
     +schema: "snplw_utils_int_tests"
 
     incremental_hooks:

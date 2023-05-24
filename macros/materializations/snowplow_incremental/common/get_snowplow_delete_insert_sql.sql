@@ -1,8 +1,8 @@
-{% macro get_snowplow_delete_insert_sql(target, source, unique_key, dest_cols_csv, predicates) -%}
-  {{ adapter.dispatch('get_snowplow_delete_insert_sql', 'snowplow_utils')(target, source, unique_key, dest_cols_csv, predicates) }}
+{% macro get_fueled_delete_insert_sql(target, source, unique_key, dest_cols_csv, predicates) -%}
+  {{ adapter.dispatch('get_fueled_delete_insert_sql', 'fueled_utils')(target, source, unique_key, dest_cols_csv, predicates) }}
 {%- endmacro %}
 
-{% macro default__get_snowplow_delete_insert_sql(target, source, unique_key, dest_cols_csv, predicates) -%}
+{% macro default__get_fueled_delete_insert_sql(target, source, unique_key, dest_cols_csv, predicates) -%}
   
     delete from {{ target }}
     where ({{ unique_key }}) in (
@@ -20,10 +20,10 @@
 {%- endmacro %}
 
 {# dbt v0.21 enabled autocommit for Snowflake. Wrap in transaction. #}
-{% macro snowflake__get_snowplow_delete_insert_sql(target, source, unique_key, dest_cols_csv, predicates) -%}
+{% macro snowflake__get_fueled_delete_insert_sql(target, source, unique_key, dest_cols_csv, predicates) -%}
   
     begin;
-    {{ snowplow_utils.default__get_snowplow_delete_insert_sql(target, source, unique_key, dest_cols_csv, predicates) }}
+    {{ fueled_utils.default__get_fueled_delete_insert_sql(target, source, unique_key, dest_cols_csv, predicates) }}
     commit;
 
 {%- endmacro %}

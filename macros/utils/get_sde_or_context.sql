@@ -1,5 +1,5 @@
 {% macro get_sde_or_context(schema, identifier, lower_limit, upper_limit, prefix = none, single_entity = true) %}
-    {{ return(adapter.dispatch('get_sde_or_context', 'snowplow_utils')(schema, identifier, lower_limit, upper_limit, prefix, single_entity)) }}
+    {{ return(adapter.dispatch('get_sde_or_context', 'fueled_utils')(schema, identifier, lower_limit, upper_limit, prefix, single_entity)) }}
 {% endmacro %}
 
 {% macro default__get_sde_or_context(schema, identifier, lower_limit, upper_limit, prefix = none, single_entity = true) %}

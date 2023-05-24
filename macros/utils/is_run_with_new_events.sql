@@ -1,7 +1,7 @@
 {% macro is_run_with_new_events(package_name) %}
 
-  {%- set new_event_limits_relation = snowplow_utils.get_new_event_limits_table_relation(package_name) -%}
-  {%- set incremental_manifest_relation = snowplow_utils.get_incremental_manifest_table_relation(package_name) -%}
+  {%- set new_event_limits_relation = fueled_utils.get_new_event_limits_table_relation(package_name) -%}
+  {%- set incremental_manifest_relation = fueled_utils.get_incremental_manifest_table_relation(package_name) -%}
 
   {% if is_incremental() %}
 

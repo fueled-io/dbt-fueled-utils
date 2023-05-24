@@ -1,5 +1,5 @@
 {%- macro set_query_tag(statement) -%}
-  {{ return(adapter.dispatch('set_query_tag', 'snowplow_utils')(statement)) }}
+  {{ return(adapter.dispatch('set_query_tag', 'fueled_utils')(statement)) }}
 {%- endmacro -%}
 
 {% macro snowflake__set_query_tag(statement) %}

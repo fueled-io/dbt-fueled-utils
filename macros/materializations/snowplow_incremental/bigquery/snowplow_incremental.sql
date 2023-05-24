@@ -1,4 +1,4 @@
-{% materialization snowplow_incremental, adapter='bigquery' -%}
+{% materialization fueled_incremental, adapter='bigquery' -%}
 
   {%- set full_refresh_mode = (should_full_refresh()) -%}
 
@@ -10,7 +10,7 @@
   {# Raise error if dtype is int64. Unsupported. #}
   {% if partition_by.data_type == 'int64' %}
     {%- set wrong_dtype_message -%}
-      Datatype int64 is not supported by 'snowplow_incremental'
+      Datatype int64 is not supported by 'fueled_incremental'
       Please use one of the following: timestamp | date | datetime
     {%- endset -%}
     {% do exceptions.raise_compiler_error(wrong_dtype_message) %}
@@ -23,7 +23,7 @@
   {%- set tmp_relation = make_temp_relation(this) %}
 
   {# Validate early so we dont run SQL if the strategy is invalid or missing keys #}
-  {% set strategy = snowplow_utils.snowplow_validate_get_incremental_strategy(config) -%}
+  {% set strategy = fueled_utils.fueled_validate_get_incremental_strategy(config) -%}
 
   {%- set cluster_by = config.get('cluster_by', none) -%}
 
@@ -45,7 +45,7 @@
   {% else %}
       {% set dest_columns = adapter.get_columns_in_relation(existing_relation) %}
 
-      {% set build_sql = snowplow_utils.snowplow_merge(
+      {% set build_sql = fueled_utils.fueled_merge(
           tmp_relation,
           target_relation,
           unique_key,

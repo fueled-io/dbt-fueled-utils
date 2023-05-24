@@ -7,7 +7,7 @@
 {% macro test_get_successful_models(enabled) -%}
   
   {% if enabled and execute %}
-    {% set actual_successful_models = snowplow_utils.get_successful_models(models=['successful_model_1', 'fail_model', 'skip_model']) %}
+    {% set actual_successful_models = fueled_utils.get_successful_models(models=['successful_model_1', 'fail_model', 'skip_model']) %}
     {% set expected_successful_models = ['successful_model_1'] %}
 
     {% if actual_successful_models == expected_successful_models %}

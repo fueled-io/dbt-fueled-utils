@@ -1,8 +1,8 @@
-{% macro get_snowplow_merge_sql(target, source, unique_key, dest_columns, predicates, include_sql_header) -%}
-  {{ adapter.dispatch('get_snowplow_merge_sql', 'snowplow_utils')(target, source, unique_key, dest_columns, predicates, include_sql_header) }}
+{% macro get_fueled_merge_sql(target, source, unique_key, dest_columns, predicates, include_sql_header) -%}
+  {{ adapter.dispatch('get_fueled_merge_sql', 'fueled_utils')(target, source, unique_key, dest_columns, predicates, include_sql_header) }}
 {%- endmacro %}
 
-{% macro default__get_snowplow_merge_sql(target, source, unique_key, dest_columns, predicates, include_sql_header) -%}
+{% macro default__get_fueled_merge_sql(target, source, unique_key, dest_columns, predicates, include_sql_header) -%}
   {%- set predicates = [] if predicates is none else [] + predicates -%}
   {%- set dest_cols_csv = get_quoted_csv(dest_columns | map(attribute="name")) -%}
   {%- set update_columns = config.get('merge_update_columns', default = dest_columns | map(attribute="quoted") | list) -%}

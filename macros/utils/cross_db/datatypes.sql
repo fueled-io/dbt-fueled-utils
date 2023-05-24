@@ -1,7 +1,7 @@
 {# string  -------------------------------------------------     #}
 
 {%- macro type_max_string() -%}
-        {{ return(adapter.dispatch('type_max_string', 'snowplow_utils')()) }}
+        {{ return(adapter.dispatch('type_max_string', 'fueled_utils')()) }}
 {%- endmacro -%}
 
 {% macro default__type_max_string() %}

@@ -10,7 +10,7 @@
     unique_key='id',
     upsert_date_key='start_tstamp',
     tags=["requires_script"],
-    snowplow_optimize=true
+    fueled_optimize=true
   )
 }}
 

@@ -1,5 +1,5 @@
 {% macro get_schemas_by_pattern(schema_pattern) %}
-    {{ return(adapter.dispatch('get_schemas_by_pattern', 'snowplow_utils')
+    {{ return(adapter.dispatch('get_schemas_by_pattern', 'fueled_utils')
         (schema_pattern)) }}
 {% endmacro %}
 

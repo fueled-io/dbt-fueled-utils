@@ -4,29 +4,29 @@
   {% set required_fields_tmp = required_fields %}
   {% set required_fields = [] %}
   {% for field in required_fields_tmp %}
-    {% set field_tuple = snowplow_utils.get_field_alias(field) %}
+    {% set field_tuple = fueled_utils.get_field_alias(field) %}
     {% do required_fields.append(field_tuple) %}
   {% endfor %}
 
   {% set required_field_names = required_fields|map(attribute=0)|list %}
 
   {# Determines correct level_limit. This limits recursive iterations during unnesting. #}
-  {% set level_limit = snowplow_utils.get_level_limit(nested_level, level_filter, required_field_names) %}
+  {% set level_limit = fueled_utils.get_level_limit(nested_level, level_filter, required_field_names) %}
 
   {# Limit level_limit to max_nested_level if required #}
   {% set level_limit = max_nested_level if level_limit is none or level_limit > max_nested_level else level_limit %}
 
-  {%- set matched_columns = snowplow_utils.get_columns_in_relation_by_column_prefix(relation, column_prefix) -%}
+  {%- set matched_columns = fueled_utils.get_columns_in_relation_by_column_prefix(relation, column_prefix) -%}
 
   {# Removes excluded versions, assuming column name ends with a version of format 'X_X_X' #}
-  {%- set filter_columns_by_version = snowplow_utils.exclude_column_versions(matched_columns, exclude_versions) -%}  
+  {%- set filter_columns_by_version = fueled_utils.exclude_column_versions(matched_columns, exclude_versions) -%}  
 
   {%- set flattened_fields_by_col_version = [] -%}
 
   {# Flatten fields within each column version. Returns nested arrays of dicts. #}
   {# Dict: {'field_name': str, 'field_alias': str, 'flattened_path': str, 'nested_level': int #}
   {% for column in filter_columns_by_version|sort(attribute='name', reverse=true) %}
-    {% set flattened_fields = snowplow_utils.flatten_fields(fields=column.fields,
+    {% set flattened_fields = fueled_utils.flatten_fields(fields=column.fields,
                                                             parent=column,
                                                             path=column.name,
                                                             array_index=array_index,
@@ -39,10 +39,10 @@
 
   {# Flatten nested arrays and merges fields across col version. Returns array of dicts containing all field_paths for field. #}
   {# Dict: {'field_name': str, 'flattened_field_paths': str, 'nested_level': int #}
-  {% set merged_fields = snowplow_utils.merge_fields_across_col_versions(flattened_fields_by_col_version) %}
+  {% set merged_fields = fueled_utils.merge_fields_across_col_versions(flattened_fields_by_col_version) %}
 
   {# Filters merged_fields based on required_fields if provided, or the level filter if provided. Default return all fields. #}
-  {% set matched_fields = snowplow_utils.get_matched_fields(fields=merged_fields,
+  {% set matched_fields = fueled_utils.get_matched_fields(fields=merged_fields,
                                                             required_field_names=required_field_names,
                                                             nested_level=nested_level,
                                                             level_filter=level_filter
@@ -58,7 +58,7 @@
     {% set field_alias = default_field_alias if not passed_field_alias|length else passed_field_alias[0] %}
 
     {# Coalesce each field's path across all version of columns, ordered by latest col version. #}
-    {% set coalesced_field_path = snowplow_utils.coalesce_field_paths(paths=field.field_paths,
+    {% set coalesced_field_path = fueled_utils.coalesce_field_paths(paths=field.field_paths,
                                                                       field_alias=field_alias,
                                                                       include_field_alias=include_field_alias,
                                                                       relation_alias=relation_alias) %}

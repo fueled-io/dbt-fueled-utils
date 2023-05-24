@@ -37,7 +37,7 @@
 with prep as (
 {% for test in tests %}
   {# accepted values of level_filter are tested elsewhere. Keep constant for this test #}
-  {%- set actual = snowplow_utils.get_matched_fields(
+  {%- set actual = fueled_utils.get_matched_fields(
                                                     fields=test.fields,
                                                     required_field_names=test.required_field_names,
                                                     nested_level=test.nested_level,

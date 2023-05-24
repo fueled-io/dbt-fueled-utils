@@ -3,7 +3,7 @@
  #}
 
 {%- macro get_split_to_array(string_column, column_prefix, delimiter=',') -%}
-    {{ return(adapter.dispatch('get_split_to_array', 'snowplow_utils')(string_column, column_prefix, delimiter)) }}
+    {{ return(adapter.dispatch('get_split_to_array', 'fueled_utils')(string_column, column_prefix, delimiter)) }}
 {%- endmacro -%}
 
 {% macro default__get_split_to_array(string_column, column_prefix, delimiter=',') %}

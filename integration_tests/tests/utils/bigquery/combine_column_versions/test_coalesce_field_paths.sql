@@ -19,7 +19,7 @@ tests:
 with prep as (
 {% for test in tests %}
 
-  {%- set actual = snowplow_utils.coalesce_field_paths(
+  {%- set actual = fueled_utils.coalesce_field_paths(
                                               paths=test.paths,
                                               field_alias=test.field_alias,
                                               include_field_alias=test.include_field_alias,

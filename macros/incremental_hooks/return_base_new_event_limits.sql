@@ -16,8 +16,8 @@
       select
         lower_limit,
         upper_limit,
-        {{ snowplow_utils.timestamp_add('day',
-                                      -var("snowplow__max_session_days", 3),
+        {{ fueled_utils.timestamp_add('day',
+                                      -var("fueled__max_session_days", 3),
                                       'lower_limit') }} as session_start_limit
 
       from {{ base_events_this_run }}
@@ -27,9 +27,9 @@
 
     {% if execute %}
 
-      {% set lower_limit = snowplow_utils.cast_to_tstamp(results.columns[0].values()[0]) %}
-      {% set upper_limit = snowplow_utils.cast_to_tstamp(results.columns[1].values()[0]) %}
-      {% set session_start_limit = snowplow_utils.cast_to_tstamp(results.columns[2].values()[0]) %}
+      {% set lower_limit = fueled_utils.cast_to_tstamp(results.columns[0].values()[0]) %}
+      {% set upper_limit = fueled_utils.cast_to_tstamp(results.columns[1].values()[0]) %}
+      {% set session_start_limit = fueled_utils.cast_to_tstamp(results.columns[2].values()[0]) %}
 
       {{ return([lower_limit, upper_limit, session_start_limit]) }}
 
@@ -37,9 +37,9 @@
 
   {% else %}
 
-    {% do exceptions.warn("Snowplow Warning: " ~ base_events_this_run ~ " does not exist. This is expected if you are compiling a fresh installation of the dbt-snowplow-* packages.") %}
+    {% do exceptions.warn("Fueled Warning: " ~ base_events_this_run ~ " does not exist. This is expected if you are compiling a fresh installation of the dbt-fueled-* packages.") %}
 
-    {% set dummy_limit = snowplow_utils.cast_to_tstamp('9999-01-01 00:00:00') %}
+    {% set dummy_limit = fueled_utils.cast_to_tstamp('9999-01-01 00:00:00') %}
 
     {{ return([dummy_limit, dummy_limit, dummy_limit]) }}
 

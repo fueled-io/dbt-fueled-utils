@@ -10,12 +10,12 @@ do
   esac
 done
 
-echo "Test get_enabled_snowplow_models: Untagged model"
+echo "Test get_enabled_fueled_models: Untagged model"
 
-OUTPUT=$(eval "dbt test --models test_get_enabled_snowplow_models --target $DATABASE --vars \"{'tag_var': 'random_tag'}\"")
+OUTPUT=$(eval "dbt test --models test_get_enabled_fueled_models --target $DATABASE --vars \"{'tag_var': 'random_tag'}\"")
 EXIT_CODE=$?
 
-if [[ $OUTPUT == *"Snowplow Warning: Untagged models referencing"* ]]; then
+if [[ $OUTPUT == *"Fueled Warning: Untagged models referencing"* ]]; then
   UNTAGGED_MODEL_ERROR=true
 fi
 
@@ -26,15 +26,15 @@ else
   exit 1
 fi
 
-echo "Test get_enabled_snowplow_models: All models"
+echo "Test get_enabled_fueled_models: All models"
 
-eval "dbt test --models test_get_enabled_snowplow_models --target $DATABASE" || exit 1;
+eval "dbt test --models test_get_enabled_fueled_models --target $DATABASE" || exit 1;
 
-echo "Test get_enabled_snowplow_models: Subset of models"
+echo "Test get_enabled_fueled_models: Subset of models"
 
 # TODO: Use the dbt ls command instead of hardcoding. Issue is the model has to exist in the project. Models may well change in the int test dir.
-eval "dbt test --models test_get_enabled_snowplow_models --target $DATABASE --vars \"{'models_to_run': 'enabled_model_w_dependency non_snowplow_model'}\"" || exit 1;
+eval "dbt test --models test_get_enabled_fueled_models --target $DATABASE --vars \"{'models_to_run': 'enabled_model_w_dependency non_fueled_model'}\"" || exit 1;
 
-echo "Test get_enabled_snowplow_models: All tests passed"
+echo "Test get_enabled_fueled_models: All tests passed"
 
 

@@ -1,4 +1,4 @@
-{% materialization snowplow_incremental, default -%}
+{% materialization fueled_incremental, default -%}
 
   {% set full_refresh_mode = flags.FULL_REFRESH %}
 
@@ -36,7 +36,7 @@
              from_relation=tmp_relation,
              to_relation=target_relation) %}
       {%- set dest_columns = adapter.get_columns_in_relation(target_relation) -%}
-      {% set build_sql = snowplow_utils.snowplow_delete_insert(
+      {% set build_sql = fueled_utils.fueled_delete_insert(
                                                      tmp_relation,
                                                      target_relation,
                                                      unique_key,

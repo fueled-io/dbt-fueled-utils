@@ -22,7 +22,7 @@
   {% if matched_columns|length %}
     {{ return(matched_columns) }}
   {% else %}
-    {{ exceptions.raise_compiler_error("Snowplow: No columns found with prefix "~column_prefix) }}
+    {{ exceptions.raise_compiler_error("Fueled: No columns found with prefix "~column_prefix) }}
   {% endif %}
 
 {% endmacro %}

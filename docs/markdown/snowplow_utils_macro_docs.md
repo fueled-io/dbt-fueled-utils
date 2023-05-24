@@ -28,13 +28,13 @@ An array of (column objects)[https://docs.getdbt.com/reference/dbt-classes#colum
 #### Usage
 
 ```sql
-get_columns_in_relation_by_column_prefix(ref('snowplow_web_base_events_this_run'), 'domain')
+get_columns_in_relation_by_column_prefix(ref('fueled_web_base_events_this_run'), 'domain')
 
 -- returns
 ['domain_sessionid', 'domain_userid', 'domain_sessionidx',...]
 
-{% set matched_columns = snowplow_utils.get_columns_in_relation_by_column_prefix(
-                    relation=ref('snowplow_web_base_events_this_run'),
+{% set matched_columns = fueled_utils.get_columns_in_relation_by_column_prefix(
+                    relation=ref('fueled_web_base_events_this_run'),
                     column_prefix='custom_context_1_0_'
                     ) %}
 
@@ -88,8 +88,8 @@ The value relevant to the target environment
 # dbt_project.yml
 ...
 vars:
-snowplow_web:
-    snowplow__backfill_limit_days: "{{ snowplow_utils.get_value_by_target(dev_value=1, default_value=30, dev_target_name='dev') }}"
+fueled_web:
+    fueled__backfill_limit_days: "{{ fueled_utils.get_value_by_target(dev_value=1, default_value=30, dev_target_name='dev') }}"
 
 ```
 {% endraw %}
@@ -97,9 +97,9 @@ snowplow_web:
 
 {% docs macro_is_run_with_new_events %}
 {% raw %}
-This macro is designed for use with Snowplow data modelling packages like `snowplow-web`. It can be used in any incremental models, to effectively block the incremental model from being updated with old data which it has already consumed. This saves cost as well as preventing historical data from being overwritten with partially complete data (due to a batch back-fill for instance).
+This macro is designed for use with Fueled data modelling packages like `fueled-web`. It can be used in any incremental models, to effectively block the incremental model from being updated with old data which it has already consumed. This saves cost as well as preventing historical data from being overwritten with partially complete data (due to a batch back-fill for instance).
 
-The macro utilizes the `snowplow_[platform]_incremental_manifest` table to determine whether the model from which the macro is called, i.e. `{{ this }}`, has already consumed the data in the given run. If it has, it returns `false`. If the data in the run contains new data, `true` is returned.
+The macro utilizes the `fueled_[platform]_incremental_manifest` table to determine whether the model from which the macro is called, i.e. `{{ this }}`, has already consumed the data in the given run. If it has, it returns `false`. If the data in the run contains new data, `true` is returned.
 
 For the sessions lifecycle identifier it does not use the manifest as this table is not included in it.
 
@@ -122,8 +122,8 @@ config(
 select
 ...
 
-from {{ ref('snowplow_mobile_base_events_this_run' ) }}
-where {{ snowplow_utils.is_run_with_new_events('snowplow_mobile') }} --returns false if run doesn't contain new events.
+from {{ ref('fueled_mobile_base_events_this_run' ) }}
+where {{ fueled_utils.is_run_with_new_events('fueled_mobile') }} --returns false if run doesn't contain new events.
 
 ```
 {% endraw %}
@@ -131,7 +131,7 @@ where {{ snowplow_utils.is_run_with_new_events('snowplow_mobile') }} --returns f
 
 {% docs macro_log_message %}
 {% raw %}
-A wrapper macro for the `dbt_utils.pretty_log_format` using the `snowplow__has_log_enabled` to determine if the log is also printed to the stdout.
+A wrapper macro for the `dbt_utils.pretty_log_format` using the `fueled__has_log_enabled` to determine if the log is also printed to the stdout.
 {% endraw %}
 {% enddocs %}
 
@@ -173,7 +173,7 @@ An alter session command set to the `query_tag` to the `statement` for Snowflake
 
 ```sql
 
-{{ snowplow_utils.set_query_tag('snowplow_query_tag') }}
+{{ fueled_utils.set_query_tag('fueled_query_tag') }}
 
 ```
 {% endraw %}
@@ -191,7 +191,7 @@ Current timestamp minus `n` units.
 
 ```sql
 
-{{ snowplow_utils.n_timedeltas_ago(1, 'weeks') }}
+{{ fueled_utils.n_timedeltas_ago(1, 'weeks') }}
 
 ```
 
@@ -215,7 +215,7 @@ The data warehouse appropriate sql to perform a list/string_agg.
 ```sql
 select
 ...
-{{ snowplow_utils.get_string_agg('base_column', 'column_prefix', ';', 'order_by_col', sort_numeric=true, order_by_column_prefix='order_by_column_prefix', is_distict=True, order_desc=True)  }},
+{{ fueled_utils.get_string_agg('base_column', 'column_prefix', ';', 'order_by_col', sort_numeric=true, order_by_column_prefix='order_by_column_prefix', is_distict=True, order_desc=True)  }},
 ...
 from ...
 group by ...
@@ -240,7 +240,7 @@ The data warehouse appropriate sql to perform a split to array.
 ```sql
 select
 ...
-{{ snowplow_utils.get_split_to_array('my_string_column', 'a', ', ') }}
+{{ fueled_utils.get_split_to_array('my_string_column', 'a', ', ') }}
 ...
 from ... a
 
@@ -263,7 +263,7 @@ The data warehouse appropriate sql to convert an array to a string.
 ```sql
 select
 ...
-{{ snowplow_utils.get_array_to_string('my_array_column', 'a', ', ') }}
+{{ fueled_utils.get_array_to_string('my_array_column', 'a', ', ') }}
 ...
 from ... a
 
@@ -276,7 +276,7 @@ from ... a
 {% docs macro_get_sde_or_context %}
 {% raw %}
 
-This macro exists for Redshift and Postgres users to more easily select their self-describing event and context tables and apply de-duplication before joining onto their (already de-duplicated) events table. The `root_id` and `root_tstamp` columns are by default returned as `schema_name_id` and `schema_name_tstamp` respectively, where `schema_name` is the value in the `schema_name` column of the table. In the case where multiple entities may be sent in the context (e.g. products in a search results), you should set the `single_entity` argument to `false` and use an additional criteria in your join (see [the snowplow docs](https://docs.snowplow.io/docs/modeling-your-data/modeling-your-data-with-dbt/dbt-advanced-usage/dbt-duplicates/) for further details).
+This macro exists for Redshift and Postgres users to more easily select their self-describing event and context tables and apply de-duplication before joining onto their (already de-duplicated) events table. The `root_id` and `root_tstamp` columns are by default returned as `schema_name_id` and `schema_name_tstamp` respectively, where `schema_name` is the value in the `schema_name` column of the table. In the case where multiple entities may be sent in the context (e.g. products in a search results), you should set the `single_entity` argument to `false` and use an additional criteria in your join (see [the fueled docs](https://docs.fueled.io/docs/modeling-your-data/modeling-your-data-with-dbt/dbt-advanced-usage/dbt-duplicates/) for further details).
 
 Note that is the responsibility of the user to ensure they have no duplicate names when using this macro multiple times or when a schema column name matches on already in the events table. In this case the `prefix` argument should be used and aliasing applied to the output.
 
@@ -288,7 +288,7 @@ CTE sql for deduplicating records from the schema table, without the schema deta
 
 With at most one entity per context:
 ```sql
-with {{ snowplow_utils.get_sde_or_context('atomic', 'nl_basjes_yauaa_context_1', "'2023-01-01'", "'2023-02-01'")}}
+with {{ fueled_utils.get_sde_or_context('atomic', 'nl_basjes_yauaa_context_1', "'2023-01-01'", "'2023-02-01'")}}
 
 select
 ...
@@ -299,7 +299,7 @@ left join nl_basjes_yauaa_context_1 b on
 ```
 With the possibility of multiple entities per context, your events table must already be de-duped but still have a field with the number of duplicates:
 ```sql
-with {{ snowplow_utils.get_sde_or_context('atomic', 'nl_basjes_yauaa_context_1', "'2023-01-01'", "'2023-02-01'", single_entity = false)}}
+with {{ fueled_utils.get_sde_or_context('atomic', 'nl_basjes_yauaa_context_1', "'2023-01-01'", "'2023-02-01'", single_entity = false)}}
 
 select
 ...,
@@ -329,7 +329,7 @@ Extracting a single field
 ```sql
 
 select
-{{ snowplow_utils.get_field(column_name = 'contexts_nl_basjes_yauaa_context_1', 
+{{ fueled_utils.get_field(column_name = 'contexts_nl_basjes_yauaa_context_1', 
                             field_name = 'agent_class', 
                             table_alias = 'a',
                             type = 'string',
@@ -344,7 +344,7 @@ Extracting multiple fields
 
 select
 {% for field in [('field1', 'string'), ('field2', 'numeric'), ...] %}
-  {{ snowplow_utils.get_field(column_name = 'contexts_nl_basjes_yauaa_context_1', 
+  {{ fueled_utils.get_field(column_name = 'contexts_nl_basjes_yauaa_context_1', 
                             field_name = field[0], 
                             table_alias = 'a',
                             type = field[1],

@@ -3,7 +3,7 @@
     {%- set predicate_override = "" -%}
     {%- set orig_predicates = [] if incremental_predicates is none else [] + incremental_predicates -%}
 
-    {%- set optimize = config.get('snowplow_optimize') -%}
+    {%- set optimize = config.get('fueled_optimize') -%}
     {% if optimize %}
 
         -- run some queries to dynamically determine the min + max of this 'upsert_date_key' in the new data
@@ -28,7 +28,7 @@
                 from {{ source }}
             {% else %}
                 select
-                    coalesce(cast({{ dateadd('day', -var("snowplow__upsert_lookback_days", 30), 'min('~date_column~')') }} as {{ date_type[0] }}), cast({{ dbt.current_timestamp() }} as {{ date_type[0] }})) as lower_limit,
+                    coalesce(cast({{ dateadd('day', -var("fueled__upsert_lookback_days", 30), 'min('~date_column~')') }} as {{ date_type[0] }}), cast({{ dbt.current_timestamp() }} as {{ date_type[0] }})) as lower_limit,
                     coalesce(max({{ date_column }}), cast({{ dbt.current_timestamp() }} as {{ date_type[0] }})) as upper_limit
                 from {{ source }}
             {% endif %}
@@ -60,7 +60,7 @@
     {# Set default predicates to pass on #}
     {%- set predicate_override = "" -%}
     {%- set orig_predicates = [] if incremental_predicates is none else [] + incremental_predicates -%}
-    {%- set optimize = config.get('snowplow_optimize') -%}
+    {%- set optimize = config.get('fueled_optimize') -%}
     {% if optimize %}
         -- run some queries to dynamically determine the min + max of this 'upsert_date_key' in the new data
         {%- set date_column = config.require('upsert_date_key') -%}
@@ -83,7 +83,7 @@
                 from {{ source }}
             {% else %}
                 select
-                    coalesce(cast({{ dateadd('day', -var("snowplow__upsert_lookback_days", 30), 'min('~date_column~')') }} as {{ date_type[0] }}), cast({{ dbt.current_timestamp() }} as {{ date_type[0] }})) as lower_limit,
+                    coalesce(cast({{ dateadd('day', -var("fueled__upsert_lookback_days", 30), 'min('~date_column~')') }} as {{ date_type[0] }}), cast({{ dbt.current_timestamp() }} as {{ date_type[0] }})) as lower_limit,
                     coalesce(max({{ date_column }}), cast({{ dbt.current_timestamp() }} as {{ date_type[0] }})) as upper_limit
                 from {{ source }}
             {% endif %}

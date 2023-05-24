@@ -8,12 +8,12 @@
     materialized='incremental',
     unique_key='id',
     upsert_date_key='start_tstamp',
-    partition_by = snowplow_utils.get_value_by_target_type(bigquery_val={
+    partition_by = fueled_utils.get_value_by_target_type(bigquery_val={
       "field": "start_tstamp",
       "data_type": "timestamp"
     }),
     tags=["requires_script"],
-    snowplow_optimize=true
+    fueled_optimize=true
   )
 }}
 

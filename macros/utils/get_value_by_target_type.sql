@@ -11,7 +11,7 @@
   {% elif target.type in ['databricks', 'spark'] %}
     {{ return(databricks_val) }}
   {% else %}
-    {{ exceptions.raise_compiler_error("Snowplow: Unexpected target type "~target.type) }}
+    {{ exceptions.raise_compiler_error("Fueled: Unexpected target type "~target.type) }}
   {% endif %}
 
 {%- endmacro -%}

@@ -17,7 +17,7 @@ done
 
 if [ "$SEED_DATA" = true ]; then
 
-  echo "Snowplow-utils integration tests: Seeding data"
+  echo "Fueled-utils integration tests: Seeding data"
 
   eval "dbt seed --target $DATABASE --full-refresh" || exit 1;
 

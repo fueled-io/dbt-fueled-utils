@@ -41,7 +41,7 @@ tests:
 with prep as (
 {% for test in tests %}
 
-  {%- set actual = snowplow_utils.get_level_limit(
+  {%- set actual = fueled_utils.get_level_limit(
                                               level=test.level,
                                               level_filter=test.level_filter,
                                               required_field_names=test.required_field_names

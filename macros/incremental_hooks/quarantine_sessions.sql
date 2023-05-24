@@ -1,6 +1,6 @@
 {% macro quarantine_sessions(package_name, max_session_length, src_relation=this) %}
   
-  {{ return(adapter.dispatch('quarantine_sessions', 'snowplow_utils')(package_name, max_session_length, src_relation=this)) }}
+  {{ return(adapter.dispatch('quarantine_sessions', 'fueled_utils')(package_name, max_session_length, src_relation=this)) }}
 
 {% endmacro %}
 
@@ -8,7 +8,7 @@
   
   {% set quarantined_sessions = ref(package_name~'_base_quarantined_sessions') %}
   
-  {% set sessions_to_quarantine_sql = snowplow_utils.get_quarantine_sql(src_relation, max_session_length) %}
+  {% set sessions_to_quarantine_sql = fueled_utils.get_quarantine_sql(src_relation, max_session_length) %}
 
   merge into {{ quarantined_sessions }} trg
   using ({{ sessions_to_quarantine_sql }}) src
@@ -25,7 +25,7 @@
   begin;
 
     create temporary table {{ sessions_to_quarantine_tmp }} as (
-      {{ snowplow_utils.get_quarantine_sql(src_relation, max_session_length) }}
+      {{ fueled_utils.get_quarantine_sql(src_relation, max_session_length) }}
     );
 
     delete from {{ quarantined_sessions }}
@@ -50,7 +50,7 @@
 
     from {{ relation }}
     -- '=' since end_tstamp is restricted to start_tstamp + max_session_days
-    where end_tstamp = {{ snowplow_utils.timestamp_add(
+    where end_tstamp = {{ fueled_utils.timestamp_add(
                               'day',
                               max_session_length,
                               'start_tstamp'

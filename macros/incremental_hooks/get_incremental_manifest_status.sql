@@ -17,7 +17,7 @@
             max(last_success) as max_last_success,
             coalesce(count(*), 0) as models
       from {{ incremental_manifest_table }}
-      where model in ({{ snowplow_utils.print_list(models_in_run) }})
+      where model in ({{ fueled_utils.print_list(models_in_run) }})
     {% endset %}
 
     {% set results = run_query(last_success_query) %}
@@ -36,7 +36,7 @@
 
   {% else %}
 
-    {% do exceptions.warn("Snowplow Warning: " ~ incremental_manifest_table ~ " does not exist. This is expected if you are compiling a fresh installation of the dbt-snowplow-* packages.") %}
+    {% do exceptions.warn("Fueled Warning: " ~ incremental_manifest_table ~ " does not exist. This is expected if you are compiling a fresh installation of the dbt-fueled-* packages.") %}
 
     {{ return(['9999-01-01 00:00:00', '9999-01-01 00:00:00', 0, false]) }}
 
@@ -57,11 +57,11 @@
 
   {% if execute %}
 
-    {% set lower_limit = snowplow_utils.tstamp_to_str(results.columns[0].values()[0]) %}
-    {% set upper_limit = snowplow_utils.tstamp_to_str(results.columns[1].values()[0]) %}
-    {% set run_limits_message = "Snowplow: Processing data between " + lower_limit + " and " + upper_limit %}
+    {% set lower_limit = fueled_utils.tstamp_to_str(results.columns[0].values()[0]) %}
+    {% set upper_limit = fueled_utils.tstamp_to_str(results.columns[1].values()[0]) %}
+    {% set run_limits_message = "Fueled: Processing data between " + lower_limit + " and " + upper_limit %}
 
-    {% do snowplow_utils.log_message(run_limits_message) %}
+    {% do fueled_utils.log_message(run_limits_message) %}
 
   {% endif %}
 

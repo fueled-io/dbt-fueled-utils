@@ -5,7 +5,7 @@
  #}
 
 {% macro timestamp_diff(first_tstamp, second_tstamp, datepart) %}
-    {{ return(adapter.dispatch('timestamp_diff', 'snowplow_utils')(first_tstamp, second_tstamp, datepart)) }}
+    {{ return(adapter.dispatch('timestamp_diff', 'fueled_utils')(first_tstamp, second_tstamp, datepart)) }}
 {% endmacro %}
 
 
@@ -20,7 +20,7 @@
 
 
 {% macro timestamp_add(datepart, interval, tstamp) %}
-    {{ return(adapter.dispatch('timestamp_add', 'snowplow_utils')(datepart, interval, tstamp)) }}
+    {{ return(adapter.dispatch('timestamp_add', 'fueled_utils')(datepart, interval, tstamp)) }}
 {% endmacro %}
 
 
@@ -49,7 +49,7 @@
 
 
 {%- macro to_unixtstamp(tstamp) -%}
-    {{ adapter.dispatch('to_unixtstamp', 'snowplow_utils') (tstamp) }}
+    {{ adapter.dispatch('to_unixtstamp', 'fueled_utils') (tstamp) }}
 {%- endmacro %}
 
 
@@ -73,7 +73,7 @@
 
 
 {% macro current_timestamp_in_utc() -%}
-  {{ return(adapter.dispatch('current_timestamp_in_utc', 'snowplow_utils')()) }}
+  {{ return(adapter.dispatch('current_timestamp_in_utc', 'fueled_utils')()) }}
 {%- endmacro %}
 
 {% macro default__current_timestamp_in_utc() %}
@@ -90,5 +90,5 @@
 
 {# redshift should use default instead of postgres #}
 {% macro redshift__current_timestamp_in_utc() %}
-    {{ return(snowplow_utils.default__current_timestamp_in_utc()) }}
+    {{ return(fueled_utils.default__current_timestamp_in_utc()) }}
 {% endmacro %}

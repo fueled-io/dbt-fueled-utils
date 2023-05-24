@@ -6,9 +6,9 @@
 
   {% set limit_query %}
     select
-    {{ snowplow_utils.timestamp_add(
+    {{ fueled_utils.timestamp_add(
                 'day', 
-                -var("snowplow__session_lookback_days", 365),
+                -var("fueled__session_lookback_days", 365),
                 lower_limit) }} as session_lookback_limit
 
   {% endset %}
@@ -17,7 +17,7 @@
    
   {% if execute %}
 
-    {% set session_lookback_limit = snowplow_utils.cast_to_tstamp(results.columns[0].values()[0]) %}
+    {% set session_lookback_limit = fueled_utils.cast_to_tstamp(results.columns[0].values()[0]) %}
 
   {{ return(session_lookback_limit) }}
 

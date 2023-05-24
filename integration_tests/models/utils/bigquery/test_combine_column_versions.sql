@@ -10,21 +10,21 @@
    'specs.accessories'
 ] %}
 
-{% set test_1_actual = snowplow_utils.combine_column_versions(relation=ref('data_combine_column_versions'),
+{% set test_1_actual = fueled_utils.combine_column_versions(relation=ref('data_combine_column_versions'),
                                                               column_prefix='staff_v',
                                                               array_index=1) %}
 
-{% set test_2_actual = snowplow_utils.combine_column_versions(relation=ref('data_combine_column_versions'),
+{% set test_2_actual = fueled_utils.combine_column_versions(relation=ref('data_combine_column_versions'),
                                                               column_prefix='product_v',
                                                               required_fields=test_2_required_fields) %}
 
-{% set test_3_actual = snowplow_utils.combine_column_versions(relation=ref('data_combine_column_versions'),
+{% set test_3_actual = fueled_utils.combine_column_versions(relation=ref('data_combine_column_versions'),
                                                               column_prefix='product_v',
                                                               nested_level=1,
                                                               relation_alias='a',
                                                               level_filter='greaterthan') %}
 
-{% set test_4_actual = snowplow_utils.combine_column_versions(relation=ref('data_combine_column_versions'),
+{% set test_4_actual = fueled_utils.combine_column_versions(relation=ref('data_combine_column_versions'),
                                                               column_prefix='product_v',
                                                               include_field_alias=false,
                                                               required_fields=['specs.volume']) %}

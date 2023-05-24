@@ -1,15 +1,15 @@
-{% macro snowplow_snowflake_get_incremental_sql(strategy, tmp_relation, target_relation, unique_key, upsert_date_key, dest_columns, disable_upsert_lookback) %}
+{% macro fueled_snowflake_get_incremental_sql(strategy, tmp_relation, target_relation, unique_key, upsert_date_key, dest_columns, disable_upsert_lookback) %}
   {% if strategy == 'merge' %}
-    {% do return(snowplow_utils.snowplow_merge(tmp_relation, target_relation, unique_key, upsert_date_key, dest_columns, disable_upsert_lookback)) %}
+    {% do return(fueled_utils.fueled_merge(tmp_relation, target_relation, unique_key, upsert_date_key, dest_columns, disable_upsert_lookback)) %}
   {% elif strategy == 'delete+insert' %}
-    {% do return(snowplow_utils.snowplow_delete_insert(tmp_relation, target_relation, unique_key, upsert_date_key, dest_columns, disable_upsert_lookback)) %}
+    {% do return(fueled_utils.fueled_delete_insert(tmp_relation, target_relation, unique_key, upsert_date_key, dest_columns, disable_upsert_lookback)) %}
   {% else %}
     {% do exceptions.raise_compiler_error('invalid strategy: ' ~ strategy) %}
   {% endif %}
 {% endmacro %}
 
 
-{% materialization snowplow_incremental, adapter='snowflake' -%}
+{% materialization fueled_incremental, adapter='snowflake' -%}
 
   {% set original_query_tag = set_query_tag() %}
 
@@ -26,7 +26,7 @@
   {% set tmp_relation = make_temp_relation(this) %}
 
   {# Validate early so we don't run SQL if the strategy is invalid or missing keys #}
-  {% set strategy = snowplow_utils.snowplow_validate_get_incremental_strategy(config) -%}
+  {% set strategy = fueled_utils.fueled_validate_get_incremental_strategy(config) -%}
 
   -- setup
   {{ run_hooks(pre_hooks, inside_transaction=False) }}
@@ -51,7 +51,7 @@
     
     {%- set dest_columns = adapter.get_columns_in_relation(target_relation) -%}
 
-    {% set build_sql = snowplow_utils.snowplow_snowflake_get_incremental_sql(strategy,
+    {% set build_sql = fueled_utils.fueled_snowflake_get_incremental_sql(strategy,
                                                                              tmp_relation,
                                                                              target_relation,
                                                                              unique_key,

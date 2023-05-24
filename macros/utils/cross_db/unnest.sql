@@ -3,7 +3,7 @@
  #}
 
 {%- macro unnest(id_column, unnest_column, field_alias, source_table) -%}
-    {{ return(adapter.dispatch('unnest', 'snowplow_utils')(id_column, unnest_column, field_alias, source_table)) }}
+    {{ return(adapter.dispatch('unnest', 'fueled_utils')(id_column, unnest_column, field_alias, source_table)) }}
 {%- endmacro -%}
 
 {% macro default__unnest(id_column, unnest_column, field_alias, source_table) %}

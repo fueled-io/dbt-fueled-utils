@@ -23,7 +23,7 @@
     {# If field has nested fields recurse to extract all fields, unless array. #}
     {% if field.dtype == 'RECORD' and field.mode != 'REPEATED' %}
 
-      {{ snowplow_utils.flatten_fields(
+      {{ fueled_utils.flatten_fields(
                                   fields=field.fields,
                                   parent=field,
                                   level_limit=level_limit,

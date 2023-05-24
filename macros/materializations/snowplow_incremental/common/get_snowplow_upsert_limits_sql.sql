@@ -1,9 +1,9 @@
-{% macro get_snowplow_upsert_limits_sql(tmp_relation, upsert_date_key, disable_upsert_lookback) -%}
-  {{ adapter.dispatch('get_snowplow_upsert_limits_sql', 'snowplow_utils')(tmp_relation, upsert_date_key, disable_upsert_lookback) }}
+{% macro get_fueled_upsert_limits_sql(tmp_relation, upsert_date_key, disable_upsert_lookback) -%}
+  {{ adapter.dispatch('get_fueled_upsert_limits_sql', 'fueled_utils')(tmp_relation, upsert_date_key, disable_upsert_lookback) }}
 {%- endmacro %}
 
 
-{% macro default__get_snowplow_upsert_limits_sql(tmp_relation, upsert_date_key, disable_upsert_lookback) -%}
+{% macro default__get_fueled_upsert_limits_sql(tmp_relation, upsert_date_key, disable_upsert_lookback) -%}
 
   {% set upsert_limits_sql -%}
 
@@ -17,7 +17,7 @@
       with vars as (
         select
               {{ dateadd('day',
-                                   -var("snowplow__upsert_lookback_days", 30),
+                                   -var("fueled__upsert_lookback_days", 30),
                                    'min('~upsert_date_key~')') }} as lower_limit,
                    max({{ upsert_date_key }}) as upper_limit
         from {{ tmp_relation }}
@@ -31,7 +31,7 @@
 {%- endmacro %}
 
 
-{% macro bigquery__get_snowplow_upsert_limits_sql(tmp_relation, upsert_date_key, disable_upsert_lookback) -%}
+{% macro bigquery__get_fueled_upsert_limits_sql(tmp_relation, upsert_date_key, disable_upsert_lookback) -%}
 
   {# partition_by supplied as upsert_date_key for BigQuery. Rename for clarity #}
   {%- set partition_by = upsert_date_key -%}
@@ -49,7 +49,7 @@
       set (dbt_partition_lower_limit, dbt_partition_upper_limit) = (
             select as struct
                    cast({{ dateadd('day',
-                                             -var("snowplow__upsert_lookback_days", 30),
+                                             -var("fueled__upsert_lookback_days", 30),
                                              'min('~partition_by.field~')') }} as {{ partition_by.data_type }}) as lower_limit,
                    max({{ partition_by.field }}) as upper_limit
             from {{ tmp_relation }}
@@ -63,7 +63,7 @@
 {%- endmacro %}
 
 
-{% macro snowflake__get_snowplow_upsert_limits_sql(tmp_relation, upsert_date_key, disable_upsert_lookback) -%}
+{% macro snowflake__get_fueled_upsert_limits_sql(tmp_relation, upsert_date_key, disable_upsert_lookback) -%}
 
   {% set upsert_limits_sql -%}
 
@@ -78,7 +78,7 @@
       set (dbt_partition_lower_limit, dbt_partition_upper_limit) = (
             select
               {{ dateadd('day',
-                                   -var("snowplow__upsert_lookback_days", 30),
+                                   -var("fueled__upsert_lookback_days", 30),
                                    'min('~upsert_date_key~')') }} as lower_limit,
                    max({{ upsert_date_key }}) as upper_limit
             from {{ tmp_relation }}
@@ -91,7 +91,7 @@
 
 {%- endmacro %}
 
-{% macro databricks__get_snowplow_upsert_limits_sql(tmp_relation, upsert_date_key, disable_upsert_lookback) -%}
+{% macro databricks__get_fueled_upsert_limits_sql(tmp_relation, upsert_date_key, disable_upsert_lookback) -%}
 
   {% set upsert_limits_sql -%}
 
@@ -105,7 +105,7 @@
     {% else %}
       select
         {{ dateadd('day',
-                              -var("snowplow__upsert_lookback_days", 30),
+                              -var("fueled__upsert_lookback_days", 30),
                               'min('~upsert_date_key~')') }} as lower_limit,
         max({{ upsert_date_key }}) as upper_limit
       from {{ tmp_relation }}
@@ -118,6 +118,6 @@
 
 {%- endmacro %}
 
-{%- macro spark__get_snowplow_upsert_limits_sql(tmp_relation, upsert_date_key, disable_upsert_lookback) -%}
-    {{ return(snowplow_utils.databricks__get_snowplow_upsert_limits_sql(tmp_relation, upsert_date_key, disable_upsert_lookback)) }}
+{%- macro spark__get_fueled_upsert_limits_sql(tmp_relation, upsert_date_key, disable_upsert_lookback) -%}
+    {{ return(fueled_utils.databricks__get_fueled_upsert_limits_sql(tmp_relation, upsert_date_key, disable_upsert_lookback)) }}
 {%- endmacro %}

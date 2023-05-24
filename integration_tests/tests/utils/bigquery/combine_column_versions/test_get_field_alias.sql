@@ -8,7 +8,7 @@
 with prep as (
 {% for test in tests %}
 
-  {%- set actual = snowplow_utils.get_field_alias(field=test.field)-%}
+  {%- set actual = fueled_utils.get_field_alias(field=test.field)-%}
   {%- set expected = test.expected -%}
 
   select "{{ actual}}" as actual, "{{ expected }}" as expected

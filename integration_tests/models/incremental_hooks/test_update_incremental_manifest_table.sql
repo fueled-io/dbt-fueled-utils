@@ -1,4 +1,4 @@
-{{ config(post_hook="{{ snowplow_utils.update_incremental_manifest_table(this, 
+{{ config(post_hook="{{ fueled_utils.update_incremental_manifest_table(this, 
                                                                          ref('data_update_incremental_manifest_table'),
                                                                         ['a','b','c']) }}",
           materialized="table"

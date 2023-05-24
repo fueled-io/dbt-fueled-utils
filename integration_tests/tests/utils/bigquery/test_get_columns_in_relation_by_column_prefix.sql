@@ -1,6 +1,6 @@
 {# TODO: add test for compiler error if no columns matched #}
 
-{% set actual_matched_columns = snowplow_utils.get_columns_in_relation_by_column_prefix(relation=ref('data_get_columns_in_relation_by_column_prefix'),
+{% set actual_matched_columns = fueled_utils.get_columns_in_relation_by_column_prefix(relation=ref('data_get_columns_in_relation_by_column_prefix'),
 																																												column_prefix='a') %}
 
 {% set actual_match_column_names = [] %}

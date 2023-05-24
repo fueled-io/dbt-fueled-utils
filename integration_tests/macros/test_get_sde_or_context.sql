@@ -1,6 +1,6 @@
 {% macro test_get_sde_or_context() %}
 
-    {{ return(adapter.dispatch('test_get_sde_or_context', 'snowplow_utils_integration_tests')()) }}
+    {{ return(adapter.dispatch('test_get_sde_or_context', 'fueled_utils_integration_tests')()) }}
 
 {% endmacro %}
 
@@ -24,13 +24,13 @@
 
 
     {% set results_dict ={
-        "default" : snowplow_utils.get_sde_or_context(target.schema ~ '_snplw_utils_int_tests', 'data_get_sde_or_context',).split()|join(' '),
-        "both_dates" : snowplow_utils.get_sde_or_context(target.schema ~ '_snplw_utils_int_tests', 'data_get_sde_or_context', "'2023-01-01'",  "'2023-02-01'").split()|join(' '),
-        "lower_only" : snowplow_utils.get_sde_or_context(target.schema ~ '_snplw_utils_int_tests', 'data_get_sde_or_context', lower_limit = "'2023-01-01'").split()|join(' '),
-        "upper_only" : snowplow_utils.get_sde_or_context(target.schema ~ '_snplw_utils_int_tests', 'data_get_sde_or_context', upper_limit = "'2023-02-01'").split()|join(' '),
-        "prefix_no_dates" : snowplow_utils.get_sde_or_context(target.schema ~ '_snplw_utils_int_tests', 'data_get_sde_or_context', prefix = 'abc').split()|join(' '),
-        "prefix_with_dates" : snowplow_utils.get_sde_or_context(target.schema ~ '_snplw_utils_int_tests', 'data_get_sde_or_context', "'2023-01-01'", "'2023-02-01'", prefix = 'abc').split()|join(' '),
-        "prefix_with_dates_not_single" : snowplow_utils.get_sde_or_context(target.schema ~ '_snplw_utils_int_tests', 'data_get_sde_or_context', "'2023-01-01'", "'2023-02-01'", prefix = 'abc', single_entity = false).split()|join(' '),
+        "default" : fueled_utils.get_sde_or_context(target.schema ~ '_snplw_utils_int_tests', 'data_get_sde_or_context',).split()|join(' '),
+        "both_dates" : fueled_utils.get_sde_or_context(target.schema ~ '_snplw_utils_int_tests', 'data_get_sde_or_context', "'2023-01-01'",  "'2023-02-01'").split()|join(' '),
+        "lower_only" : fueled_utils.get_sde_or_context(target.schema ~ '_snplw_utils_int_tests', 'data_get_sde_or_context', lower_limit = "'2023-01-01'").split()|join(' '),
+        "upper_only" : fueled_utils.get_sde_or_context(target.schema ~ '_snplw_utils_int_tests', 'data_get_sde_or_context', upper_limit = "'2023-02-01'").split()|join(' '),
+        "prefix_no_dates" : fueled_utils.get_sde_or_context(target.schema ~ '_snplw_utils_int_tests', 'data_get_sde_or_context', prefix = 'abc').split()|join(' '),
+        "prefix_with_dates" : fueled_utils.get_sde_or_context(target.schema ~ '_snplw_utils_int_tests', 'data_get_sde_or_context', "'2023-01-01'", "'2023-02-01'", prefix = 'abc').split()|join(' '),
+        "prefix_with_dates_not_single" : fueled_utils.get_sde_or_context(target.schema ~ '_snplw_utils_int_tests', 'data_get_sde_or_context', "'2023-01-01'", "'2023-02-01'", prefix = 'abc', single_entity = false).split()|join(' '),
         }
     %}
 
