@@ -29,7 +29,7 @@ vars:
 
 models:
   fueled_utils_integration_tests:
-    +schema: "snplw_utils_int_tests"
+    +schema: "fueled_utils_int_tests"
     materializations:
       snowflake_delete_insert:
         enabled: "{{ target.type == 'snowflake' | as_bool() }}"
@@ -57,7 +57,7 @@ tests:
 seeds:
   +quote_columns: false
   fueled_utils_integration_tests:
-    +schema: "snplw_utils_int_tests"
+    +schema: "fueled_utils_int_tests"
 
     incremental_hooks:
 
