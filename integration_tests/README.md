@@ -13,20 +13,3 @@ dbt seed --full-refresh
 dbt run --full-refresh --exclude tag:requires_script
 dbt test --exclude tag:requires_script
 ``` 
-
-The `integration_tests.sh` script will run all available tests, using both the standard testing technique and the dedicated scripts.
-
-Run the script using:
-```bash
-bash integration_tests.sh -d {warehouse}
-```
-
-Supported warehouses:
-- redshift
-- bigquery
-- snowflake
-- postgres
-- databricks
-- all (iterates through all supported warehouses)
-
-The `.scripts/test_XXX.sh` scripts are the dedicated scripts and can be run on an individual basis.
