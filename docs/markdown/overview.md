@@ -1,3 +1,6 @@
+{% docs __overview__ %}
+{% raw %}
+
 # fueled-utils
 
 This package contains a mix of functionality to be used with the other Fueled dbt packages, or to be used within your own packages/projects.
@@ -690,3 +693,6 @@ limitations under the License.
 # Significant Changes
 
 Snowplow's dbt-snowplow-util package has been mirrored by Fueled to work with Fueled's base event structures.
+
+{% endraw %}
+{% enddocs %}
