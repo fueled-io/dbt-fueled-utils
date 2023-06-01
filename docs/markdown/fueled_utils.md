@@ -1,4 +1,4 @@
-{% docs __overview__ %}
+{% docs __fueled_utils__ %}
 {% raw %}
 
 # fueled-utils
